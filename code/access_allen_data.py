@@ -112,6 +112,10 @@ def get_type_presentations(stimulus_type, session):
         type_presentations = type_presentations.replace("null", pd.NA)
         type_presentations = type_presentations.dropna()
 
+    # Filter out -1 frame values for natural scenes: these indicate no stimulus shown
+    if 'natural_scenes' in stimulus_type:
+        type_presentations = type_presentations[type_presentations['frame'] != -1]
+
     return type_presentations
 
 def whole_movie_presentations(presentations):
