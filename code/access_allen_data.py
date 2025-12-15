@@ -37,7 +37,7 @@ def process_session(cache, session_id):
                     if 'spontaneous' not in st and 'shuffled' not in st]
 
     running_speed = session.running_speed
-    gaze_data = session.gaze_data
+    gaze_data = session.get_screen_gaze_data()
     print('Obtained running speed and gaze data.')
 
     output_folder = Path(f'data/01_sessions_presentations/session_{session_id}/')
@@ -93,6 +93,11 @@ def get_type_presentations(stimulus_type, session):
     # Group movie frame presentations into whole movie presentations
     if 'movie' in stimulus_type:
         type_presentations = whole_movie_presentations(type_presentations)
+
+    # Filter out null values for drifting or static gratings
+    if 'gratings' in stimulus_type:
+        type_presentations = type_presentations.replace("null", pd.NA)
+        type_presentations = type_presentations.dropna()
 
     return type_presentations
 
