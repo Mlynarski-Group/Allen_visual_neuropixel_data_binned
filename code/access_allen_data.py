@@ -116,7 +116,6 @@ def whole_movie_presentations(presentations):
     df['movie_group'] = new_movie.cumsum()
     agg = df.groupby('movie_group').agg(
         stimulus_block=('stimulus_block', 'first'),
-        stimulus_name=('stimulus_name', 'first'),
         start_time=('start_time', 'min'),
         stop_time=('stop_time', 'max'),
         first_presentation_id=('stimulus_presentation_id', 'first'),
