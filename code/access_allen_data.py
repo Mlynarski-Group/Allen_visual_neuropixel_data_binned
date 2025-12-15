@@ -34,6 +34,8 @@ relevant_stimulus_parameters = {
     'dot_motion': ['Speed', 'Dir']
 }
 
+completed_sessions = []
+
 
 def process_session(cache, session_id):
     session = cache.get_session_data(session_id)
@@ -220,6 +222,9 @@ def main():
 
     # Process each session
     for session_id in session_ids:
+        if session_id in completed_sessions:
+            log.info("Skipping already completed session %s.", session_id)
+            continue
         log.info("Processing session %s (%d/%d)",
             session_id, session_ids.index(session_id)+1, len(session_ids))
         t0 = time.perf_counter()
