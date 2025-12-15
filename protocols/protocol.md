@@ -64,3 +64,9 @@ Along dimensions trials: stimulus condition (e.g. orientation, spatial frequency
 
 # Assembling data
 - natural_movie_one_more_repeats and natural_movie_one
+
+# Gotchas
+- *null values in gratings of brain_observatory_1.1*: in brain_observatory_1.1 sessions,
+    some drifting_gratings and static_gratings stimulus presentations have 'null' values.
+    They correspond to blank trials with no stimulus presented.
+    These 'null' trials will be filtered out.
