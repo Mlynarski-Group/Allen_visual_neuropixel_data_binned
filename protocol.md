@@ -1,0 +1,66 @@
+# Meeting with Augustine 05.12.2025
+- One h5 file per stimulus type
+- Within each h5 file, different 3D tensors for each brain area and each session
+- 3D tensor shape: neurons x time x trials
+- Spiking data in binary format for 20 ms bins
+
+# Installation
+```bash
+conda create -n allensdk python=3.9 pip
+pip install allensdk
+pip install ipykernel
+```
+
+Running speed time resolution:  0.01533 / 0.03304 seconds
+
+Along dimensions time/trials: speed, pupil data
+Along dimensions neurons: brain area, unit_analysis_metrics (for each stimulus type)?
+Along dimensions trials: stimulus condition (e.g. orientation, spatial frequency, contrast, etc)
+
+# Session attributes
+- session type
+
+# Relevant stimulus parameters
+## gabors
+- orientation
+- y_position
+- x_position
+
+## flashes
+- color
+
+## drifting_gratings
+- temporal_frequency
+- orientation
+
+## static_gratings
+- phase
+- spatial_frequency
+- orientation
+
+## natural_scenes
+- frame
+
+## natural_movie_one
+- frame
+
+## natural_movie_three
+- frame
+
+## natural_movie_one_more_repeats
+- frame
+
+## drifting_gratings_contrast
+- contrast
+- orientation
+
+## drifting_gratings_75_repeats
+- contrast
+- orientation
+
+## dot_motion
+- Speed
+- Dir
+
+# Assembling data
+- natural_movie_one_more_repeats and natural_movie_one
