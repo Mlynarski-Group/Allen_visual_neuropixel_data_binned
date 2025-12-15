@@ -1,7 +1,6 @@
 import gc
 import logging
 import os
-import sys
 import time
 from pathlib import Path
 
@@ -16,9 +15,11 @@ pd.set_option("display.max_columns", None)
 # Set up logging
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(levelname)s %(message)s",
-                    handlers=[logging.FileHandler("run.log"),
-                              logging.StreamHandler(sys.stdout)])
+                    handlers=[logging.FileHandler("logs/run.log")])
 log = logging.getLogger()
+# Quiet noisy third-party loggers
+for name in ("allensdk", "urllib3", "botocore"):
+    logging.getLogger(name).setLevel(logging.WARNING)
 
 relevant_stimulus_parameters = {
     'gabors': ['orientation', 'y_position', 'x_position'],
@@ -41,7 +42,7 @@ completed_sessions = []
 
 def process_session(cache, session_id):
     session = cache.get_session_data(session_id)
-    log.info("\nSession %s loaded.", session_id)
+    log.info("Session %s loaded.", session_id)
 
     # Access stimulus presentations
     stimulus_types = session.stimulus_names
