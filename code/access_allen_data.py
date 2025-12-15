@@ -34,6 +34,8 @@ relevant_stimulus_parameters = {
     'dot_motion': ['Speed', 'Dir']
 }
 
+invalid_stimulus_substr = ['spontaneous', 'shuffled', 'invalid']
+
 completed_sessions = []
 
 
@@ -43,8 +45,9 @@ def process_session(cache, session_id):
 
     # Access stimulus presentations
     stimulus_types = session.stimulus_names
+    # Filter out unwanted stimulus types
     stimulus_types = [st for st in stimulus_types
-                    if 'spontaneous' not in st and 'shuffled' not in st]
+                      if all(substr not in st for substr in invalid_stimulus_substr)]
 
     running_speed = session.running_speed
     gaze_data = session.get_screen_gaze_data()
