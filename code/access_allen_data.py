@@ -1,7 +1,8 @@
 import gc
+import logging
 import os
+import sys
 import time
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -12,6 +13,12 @@ from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProj
 # tell pandas to show all columns when we display a DataFrame
 pd.set_option("display.max_columns", None)
 
+# Set up logging
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s",
+                    handlers=[logging.FileHandler("run.log"),
+                              logging.StreamHandler(sys.stdout)])
+log = logging.getLogger()
 
 relevant_stimulus_parameters = {
     'gabors': ['orientation', 'y_position', 'x_position'],
@@ -27,9 +34,10 @@ relevant_stimulus_parameters = {
     'dot_motion': ['Speed', 'Dir']
 }
 
+
 def process_session(cache, session_id):
     session = cache.get_session_data(session_id)
-    print(f"\nSession {session_id} loaded.")
+    log.info("\nSession %s loaded.", session_id)
 
     # Access stimulus presentations
     stimulus_types = session.stimulus_names
@@ -38,13 +46,13 @@ def process_session(cache, session_id):
 
     running_speed = session.running_speed
     gaze_data = session.get_screen_gaze_data()
-    print('Obtained running speed and gaze data.')
+    log.info('Obtained running speed and gaze data.')
 
     output_folder = Path(f'data/01_sessions_presentations/session_{session_id}/')
     output_folder.mkdir(parents=True, exist_ok=True)
 
     for stimulus_type in stimulus_types:
-        print(f"\tProcessing stimulus type: {stimulus_type}")
+        log.info("\tProcessing stimulus type: %s", stimulus_type)
         process_stimulus_type(
             stimulus_type, session, output_folder, running_speed, gaze_data)
 
@@ -58,17 +66,17 @@ def process_stimulus_type(stimulus_type, session, output_folder,
 
     # Compute spike counts
     spike_counts = compute_spike_counts(type_presentations, session)
-    print('\t\tComputed spike counts.')
+    log.info('\t\tComputed spike counts.')
     # Get running speed and gaze data aligned to presentations
     type_running_speed = get_running_speed(
         spike_counts, running_speed, type_presentations)
-    print('\t\tComputed running speed.')
+    log.info('\t\tComputed running speed.')
     if gaze_data is not None:
         type_gaze_data = get_gaze_data(
             spike_counts, gaze_data, type_presentations)
     else:
         type_gaze_data = None
-    print('\t\tComputed gaze data.')
+    log.info('\t\tComputed gaze data.')
 
     stimuli = type_presentations.astype(np.float32).to_xarray()
 
@@ -195,7 +203,7 @@ def combine_and_save_data(
         gaze_data.to_netcdf(output_folder / f'{stimulus_type}_gaze_data.nc')
     stimuli.to_netcdf(output_folder / f'{stimulus_type}_stimuli.nc')
 
-    print(f"\t\tFiles for stimulus type {stimulus_type} saved.")
+    log.info("\t\tFiles for stimulus type %s saved.", stimulus_type)
 
     # combined_data.to_netcdf(output_folder / f'{stimulus_type}.nc')
 
@@ -204,23 +212,22 @@ def main():
     input_dir = '/storage2/wp7/allendata'
     manifest_path = os.path.join(input_dir, "manifest.json")
     cache = EcephysProjectCache.from_warehouse(manifest=manifest_path)
-    print("Cache loaded.")
+    log.info("Cache loaded.")
 
     # Load sessions_table
     sessions_table = cache.get_session_table()
     session_ids = sessions_table.index.values.tolist()
-    print(f"Found {len(session_ids)} sessions.")
+    log.info("Found %d sessions.", len(session_ids))
 
     # Process each session
     for session_id in session_ids:
-        print(f"Processing session {session_id}"
-              f"({session_ids.index(session_id)+1}/{len(session_ids)})")
+        log.info("Processing session %s (%d/%d)",
+            session_id, session_ids.index(session_id)+1, len(session_ids))
         t0 = time.perf_counter()
         process_session(cache, session_id)
         t1 = time.perf_counter()
-        t1_iso = datetime.now().isoformat()
         dur = t1 - t0
-        print(f"Finished session {session_id} in {dur:.2f} seconds at {t1_iso}.")
+        log.info("Finished session %s in %.2f seconds.", session_id, dur)
 
 
 if __name__ == '__main__':
