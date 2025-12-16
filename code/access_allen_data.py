@@ -112,7 +112,7 @@ def get_type_presentations(stimulus_type, session):
         type_presentations = whole_movie_presentations(type_presentations)
 
     # Filter out null values for drifting or static gratings
-    if 'gratings' in stimulus_type:
+    if 'gratings' in stimulus_type or 'dot_motion' in stimulus_type:
         type_presentations = type_presentations.replace("null", pd.NA)
         type_presentations = type_presentations.dropna()
 
