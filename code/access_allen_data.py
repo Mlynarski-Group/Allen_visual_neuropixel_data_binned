@@ -40,7 +40,11 @@ relevant_stimulus_parameters = {
 
 invalid_stimulus_substr = ['spontaneous', 'shuffled', 'invalid']
 
+completed_sessions_path = Path("logs/completed_sessions")
 completed_sessions = []
+if completed_sessions_path.exists():
+    with completed_sessions_path.open() as f:
+        completed_sessions = [int(l.strip()) for l in f if l.strip()]
 
 
 def process_session(cache, session_id):
@@ -233,9 +237,11 @@ def main():
 
     # Process each session
     for session_id in session_ids:
+        # Skip already completed session
         if session_id in completed_sessions:
             log.info("Skipping already completed session %s.", session_id)
             continue
+
         log.info("Processing session %s (%d/%d)",
             session_id, session_ids.index(session_id)+1, len(session_ids))
         t0 = time.perf_counter()
@@ -243,6 +249,10 @@ def main():
         t1 = time.perf_counter()
         dur = t1 - t0
         log.info("Finished session %s in %.2f seconds.", session_id, dur)
+
+        # Add session to completed
+        with completed_sessions_path.open("a") as f:
+            f.write(f"{session_id}\n")
 
 
 if __name__ == '__main__':
