@@ -17,9 +17,12 @@ logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(levelname)s %(message)s",
                     handlers=[logging.FileHandler("logs/run.log")])
 log = logging.getLogger()
-# Quiet noisy third-party loggers
-for name in ("allensdk", "urllib3", "botocore"):
-    logging.getLogger(name).setLevel(logging.WARNING)
+
+# Quiet noisy allensdk logger
+lg = logging.getLogger("call_caching")
+for h in lg.handlers[:]:
+    lg.removeHandler(h)
+lg.setLevel(logging.WARNING)
 
 relevant_stimulus_parameters = {
     'gabors': ['orientation', 'y_position', 'x_position'],
