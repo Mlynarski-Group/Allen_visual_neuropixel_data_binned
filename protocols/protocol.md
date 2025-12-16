@@ -55,6 +55,16 @@ relevant_stimulus_parameters = {
 
 # Filtered out stimulus presentations
 - **-1 frame values in natural scenes**: no stimulus shown
-- **'null' values in gratings of brain_observatory_1.1**: in brain_observatory_1.1 sessions,
-    some *drifting_gratings* and *static_gratings* stimulus presentations have 'null' values.
-    Blank trials with no stimulus presented.
+- **'null' values in gratings and dot_motion**: some stimulus presentations have 'null' values in:
+    - drifting_gratings
+    - static_gratings
+    - dot_motion
+    Those are blank trials with no stimulus presented.
+
+# Applied data processing
+- Bin and binarize spiking data into 20 ms bins, including *longest* stimulus presentations
+- Only count spikes within each presentation's duration
+- Align times to stimulus onset
+- Label bins by center time
+- ! Align running speed to spiking bins by linear interpolation
+- ! Align all pupil data variables to spiking bins by linear interpolation
