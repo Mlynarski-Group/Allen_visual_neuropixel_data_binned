@@ -7,13 +7,14 @@ import xarray as xr
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s %(levelname)s %(message)s",
-                    handlers=[logging.StreamHandler(sys.stderr)])
+                    handlers=[logging.StreamHandler(sys.stderr),
+                              logging.FileHandler("logs/run.log")])
 log = logging.getLogger()
 
 def build_all_stimulus_h5(
-    units_path="logs/data/units.csv",
+    units_path="data/units.csv",
     sessions_root="data/01_sessions_presentations",
-    out_dir="logs/data/02_stimulus_types",
+    out_dir="data/02_stimulus_types",
 ):
     sessions_root = Path(sessions_root)
     out_dir = Path(out_dir)
