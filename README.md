@@ -73,7 +73,7 @@ pip install ipykernel
 ```
 ## Running the code
 ```bash
-nohup ./code/datalad_wrapper.sh & echo $! > logs/run.pid  # Start remote job with wrapper
+nohup setsid ./code/datalad_wrapper.sh & echo $! > logs/run.pid  # Start remote job with wrapper
 ps -p $(cat logs/run.pid)  # Check if job is running
 tail -n 200 logs/run.log  # Print log to terminal
 ```
