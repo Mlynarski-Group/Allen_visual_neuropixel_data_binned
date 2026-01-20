@@ -65,7 +65,7 @@ def process_session(cache, session_id, presentations_by_session):
     log.info('Obtained running speed and gaze data.')
     unit_ids = session.units.index.values
 
-    output_folder = Path(f'logs/data/01_sessions_presentations/session_{session_id}/')
+    output_folder = Path(f'data/01_sessions_presentations/session_{session_id}/')
     output_folder.mkdir(parents=True, exist_ok=True)
 
     for stimulus_type in stimulus_types:
