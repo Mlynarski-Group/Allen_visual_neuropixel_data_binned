@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 
+import pandas as pd
 from allensdk.brain_observatory.ecephys.ecephys_project_cache import EcephysProjectCache
 
 # Set up logging
@@ -36,19 +37,25 @@ out.unlink(missing_ok=True)
 invalid = ["spontaneous", "shuffled", "invalid"]
 invalid_pattern = "|".join(invalid)
 
+pres_all = pd.DataFrame()
+
 for i, session_id in enumerate(session_ids, 1):
     session = cache.get_session_data(session_id)
     log.info(f"Session {session_id} loaded ({i}/{len(session_ids)}).")
 
-    pres = session.stimulus_presentations.reset_index()
+    pres = session.stimulus_presentations
 
     # Filter out invalid stimulus presentation types
     pres = pres[~pres["stimulus_name"].str.contains(invalid_pattern, regex=True)]
 
-    pres.insert(loc=0, column="session_id", value=session_id)
-    pres.to_csv(out, mode="a", header=not out.exists(), index=False)
+    # Move 'stimulus_presentation_id' to first column and add 'session_id' column
+    pres = pres.reset_index()
+    pres.insert(0, "session_id", session_id)
+
+    pres_all = pd.concat([pres_all, pres], axis=0, ignore_index=True)
 
     del session
     gc.collect()
 
+pres_all.to_csv(out, index=False)
 log.info("Done.")
