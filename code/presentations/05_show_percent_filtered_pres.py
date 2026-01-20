@@ -1,0 +1,15 @@
+import pandas as pd
+
+pres_all = pd.read_csv('data/presentations/02_presentations_whole_movies.csv')
+pres_filt = pd.read_csv('data/presentations/03_presentations_filtered_by_duration.csv')
+
+names = pres_all['stimulus_name'].unique()
+
+for name in names:
+    name_dur = pres_all[pres_all['stimulus_name'] == name]['duration']
+    num_pres = len(name_dur)
+    name_dur_filt = pres_filt[pres_filt['stimulus_name'] == name]['duration']
+    num_pres_filt = len(name_dur_filt)
+
+    print(f"{name}: {num_pres} - {num_pres_filt} = {num_pres - num_pres_filt}"
+          f" ({(num_pres - num_pres_filt) / num_pres * 100:.2f}%)")
