@@ -26,6 +26,12 @@ movie_pres_whole = movie_pres_whole.reset_index().drop(columns=['movie_group'])
 other_pres = pres[~pres['stimulus_name'].str.contains('natural_movie')]
 
 all_pres = pd.concat([other_pres, movie_pres_whole], ignore_index=True)
-all_pres = all_pres.sort_values(['session_id', 'stimulus_presentation_id'])
+
+# Sort to preserve original order
+sess_order = pres['session_id'].drop_duplicates()
+all_pres['session_id'] = pd.Categorical(
+    all_pres['session_id'], categories=sess_order, ordered=True)
+all_pres = all_pres.sort_values(['session_id', 'stimulus_presentation_id'],
+                                kind='stable')
 
 all_pres.to_csv(output_path, index=False)
