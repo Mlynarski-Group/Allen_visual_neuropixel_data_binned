@@ -25,8 +25,8 @@ def build_all_stimulus_h5(
 
     units = pd.read_csv(units_path, index_col="id")
 
-    for stim_type in stim_types:
-        log.info("Processing stimulus type: %s", stim_type)
+    for i, stim_type in enumerate(stim_types):
+        log.info("Processing stimulus type: %s (%d/%d)", stim_type, i + 1, len(stim_types))
         write_one_stimulus_file(stim_type, session_ids, units, sessions_root, out_dir)
 
 def discover_session_ids(sessions_root: Path) -> list[int]:
@@ -37,6 +37,9 @@ def discover_all_stim_types(sessions_root: Path, session_ids: list[int]) -> list
     for session_id in session_ids:
         session_dir = sessions_root / f"session_{session_id}"
         stim_names |= set(discover_stims_in_session(session_dir))
+    if "natural_movie_one_more_repeats" in stim_names:
+        stim_names.add("natural_movie_one")
+        stim_names.discard("natural_movie_one_more_repeats")
     return sorted(stim_names)
 
 def discover_stims_in_session(session_dir: Path) -> list[str]:
@@ -54,41 +57,29 @@ def write_one_stimulus_file(
 
     sessions_with_stim = [sid for sid in session_ids
                           if has_stim_type(sessions_root, sid, stim_type)]
-    structures = discover_stim_structures(units, sessions_with_stim)
+    for i, session_id in enumerate(sessions_with_stim):
+        log.info("  Processing session %d (%d/%d)", session_id, i + 1, len(sessions_with_stim))
+        session_dir = sessions_root / f"session_{session_id}"
+        session_data = load_session_stimulus(session_dir, stim_type)
+        session_data = standardize_names(session_data)
+        session_structures = discover_stim_structures(units, [session_id])
 
-    for structure in structures:
-        log.info("  Writing structure: %s", structure)
-        write_one_structure_group(
-            units, sessions_root, out_path, stim_type, structure, sessions_with_stim)
+        for structure in session_structures:
+            unit_ids = unit_ids_for_session_structure(units, session_id, structure)
+            structure_data = dict(session_data)
+            structure_data["spike_data"] = session_data["spike_data"].sel(unit_id=unit_ids)
+            write_session_group(out_path, structure, session_id, structure_data)
 
 def has_stim_type(sessions_root: Path, session_id: int, stim_type: str) -> bool:
     session_dir = sessions_root / f"session_{session_id}"
+    if stim_type == "natural_movie_one":
+        return ((session_dir / "natural_movie_one_spike_counts.nc").exists()
+                or (session_dir / "natural_movie_one_more_repeats_spike_counts.nc").exists())
     return (session_dir / f"{stim_type}_spike_counts.nc").exists()
 
 def discover_stim_structures(units, session_ids: list[int]) -> list[str]:
     sess_units = units[units["ecephys_session_id"].isin(session_ids)]
     return sorted(sess_units["ecephys_structure_acronym"].dropna().unique().tolist())
-
-def write_one_structure_group(
-    units,
-    sessions_root: Path,
-    out_path: Path,
-    stim: str,
-    structure: str,
-    session_ids: list[int],
-):
-    for session_id in session_ids:
-        log.info("    Processing session %d", session_id)
-        unit_ids = unit_ids_for_session_structure(units, session_id, structure)
-        if not unit_ids:
-            continue
-
-        session_dir = sessions_root / f"session_{session_id}"
-        session_data = load_session_stimulus(session_dir, stim)
-        session_data = standardize_names(session_data)
-        session_data["spike_data"] = session_data["spike_data"].sel(unit_id=unit_ids)
-
-        write_session_group(out_path, structure, session_id, session_data)
 
 def unit_ids_for_session_structure(units, session_id: int, structure: str) -> list[int]:
     ses_units = units[units["ecephys_session_id"] == session_id]
@@ -96,6 +87,42 @@ def unit_ids_for_session_structure(units, session_id: int, structure: str) -> li
     return ses_struct_units.index.to_list()
 
 def load_session_stimulus(session_dir: Path, stim: str) -> dict:
+    if stim != "natural_movie_one":
+        return load_one_stimulus(session_dir, stim)
+
+    parts = []
+    for stim_name in ("natural_movie_one", "natural_movie_one_more_repeats"):
+        spikes_path = session_dir / f"{stim_name}_spike_counts.nc"
+        if spikes_path.exists():
+            parts.append(load_one_stimulus(session_dir, stim_name))
+
+    if len(parts) == 1:
+        return parts[0]
+
+    spikes_da = xr.concat(
+        [part["spike_counts"] for part in parts],
+        dim="stimulus_presentation_id"
+    )
+    speed_da = xr.concat(
+        [part["running_speed"] for part in parts],
+        dim="stimulus_presentation_id"
+    )
+    presentations_ds = xr.concat(
+        [part["stimuli"] for part in parts],
+        dim="stimulus_presentation_id"
+    )
+
+    gaze_parts = [part["gaze_data"] for part in parts]
+    gaze_ds = xr.concat(gaze_parts, dim="stimulus_presentation_id")
+
+    return {
+        "spike_counts": spikes_da,
+        "running_speed": speed_da,
+        "stimuli": presentations_ds,
+        "gaze_data": gaze_ds,
+    }
+
+def load_one_stimulus(session_dir: Path, stim: str) -> dict:
     spikes_da = xr.load_dataarray(session_dir / f"{stim}_spike_counts.nc")
     speed_da = xr.load_dataarray(session_dir / f"{stim}_running_speed.nc")
     presentations_ds = xr.load_dataset(session_dir / f"{stim}_stimuli.nc")
@@ -147,7 +174,7 @@ def standardize_names(session_data: dict) -> dict:
 
 def write_session_group(
         out_path: Path, structure: str, session_id: int, session_data: dict):
-    base_group = f"{structure}/session_{session_id}"
+    base_group = f"session_{session_id}/{structure}"
 
     write_xr(session_data["spike_data"], out_path, f"{base_group}/spike_data")
     write_xr(session_data["speed"], out_path, f"{base_group}/speed")

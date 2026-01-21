@@ -7,8 +7,8 @@
 # Output files' structure
 ```
 / {stimulus_type}.h5
-    / {brain_structure}
-        / session_{session_id}
+    / session_{session_id}
+        / {brain_structure}
             / spike_data: xarray.DataArray (presentation_id x unit_id x time)
             / speed: xarray.DataArray (presentation_id x time)
             / pupil_data: xarray.DataSet (presentation_id x time): pupil_variables
