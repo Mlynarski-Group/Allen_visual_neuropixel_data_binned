@@ -1,0 +1,12 @@
+stimulus_name,num_presentations_before,num_presentations_after,num_presentations_removed,percent_presentations_removed
+gabors,211361,211282,79,0.04
+flashes,8696,8694,2,0.02
+drifting_gratings,20146,20129,17,0.08
+natural_movie_three,320,314,6,1.88
+natural_movie_one,640,628,12,1.88
+static_gratings,191360,191336,24,0.01
+natural_scenes,190362,190323,39,0.02
+drifting_gratings_contrast,18360,18355,5,0.03
+natural_movie_one_more_repeats,1559,1551,8,0.51
+drifting_gratings_75_repeats,15600,15591,9,0.06
+dot_motion,11070,11031,39,0.35
