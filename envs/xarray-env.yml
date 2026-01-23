@@ -1,0 +1,11 @@
+name: xarray-env
+channels:
+  - conda-forge
+dependencies:
+  - h5netcdf
+  - h5py
+  - ipykernel
+  - matplotlib
+  - netcdf4
+  - pandas
+  - xarray
