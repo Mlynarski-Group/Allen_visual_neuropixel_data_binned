@@ -1,7 +1,7 @@
 import pandas as pd
 
 input_path = 'data/presentations/02_presentations_whole_movies.csv'
-output_path = 'presentation/presentations_median_durations.csv'
+output_path = 'docs/presentations_median_durations.csv'
 
 pres = pd.read_csv(input_path)
 names = pres['stimulus_name'].unique()

@@ -2,7 +2,7 @@ import pandas as pd
 
 pres_all = pd.read_csv('data/presentations/02_presentations_whole_movies.csv')
 pres_filt = pd.read_csv('data/presentations/03_presentations_filtered_by_duration.csv')
-output_path = 'presentation/presentations_filtered_summary.csv'
+output_path = 'docs/presentations_filtered_summary.csv'
 
 names = pres_all['stimulus_name'].unique()
 

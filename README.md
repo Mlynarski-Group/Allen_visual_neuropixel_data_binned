@@ -39,6 +39,18 @@ relevant_stimulus_parameters = {
 - Along dimension neurons: spike_data
 - Along dimension trials: spike_data, speed, pupil_data, presentations
 
+# Main data files
+- [data/02_stimulus_types/](data/02_stimulus_types/): h5 files per stimulus type with processed data tensors
+- [data/presentations/03_presentations_filtered_by_duration.csv](data/presentations/03_presentations_filtered_by_duration.csv): All presentations remaining after filtering out presentations with irregular durations
+- [data/combined_statistics.csv](data/combined_statistics.csv): Summary statistics of the numbers of units and presentations per stimulus type, session, and brain structure
+
+## Additional data files
+- [data/sessions.csv](data/sessions.csv): Summary of all sessions (allen sdk metadata)
+- [data/units.csv](data/units.csv): Summary of all units (allen sdk metadata)
+- [docs/All_presentation_parameters.csv](docs/All_presentation_parameters.csv): All unique stimulus parameters for all stimulus types and all presentations
+- [docs/presentations_median_durations.csv](docs/presentations_median_durations.csv): Actual median durations used for filtering presentations per stimulus type
+- [docs/presentations_filtered_summary.csv](docs/presentations_filtered_summary.csv): Summary of number of presentations before and after filtering per stimulus type
+
 # Actions taken on data
 ## Combined stimulus types
 - natural_movie_one_more_repeats and natural_movie_one
