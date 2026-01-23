@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 
+output_path = "figures/example_spikes_over_bins.png"
+
 
 def plot_spikes(times, unit_order=None, ax=None, color="red"):
     if unit_order is None:
@@ -78,4 +80,4 @@ def main(spike, times):
     ax.set_title("Spike raster bins with spike times overlay")
 
     fig.tight_layout()
-    fig.savefig("spikes_over_bins.png", dpi=200)
+    fig.savefig(output_path, dpi=200)

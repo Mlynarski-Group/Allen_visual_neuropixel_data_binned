@@ -167,7 +167,7 @@ spike_data
 # # Plot raster from loaded binned data and compare with original data
 
 # +
-import plot_spikes_over_bins
+import temp_Allen_data.docs.plot_spikes_over_bins as plot_spikes_over_bins
 
 # Reload spike times from CSV for comparison
 times = pd.read_csv('_temp_spike_times.csv')
