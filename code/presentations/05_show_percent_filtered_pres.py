@@ -15,7 +15,7 @@ for name in names:
     num_pres_filt = len(name_dur_filt)
 
     rows.append((name, num_pres, num_pres_filt, num_pres - num_pres_filt,
-                 (num_pres - num_pres_filt) / num_pres * 100))
+                 round((num_pres - num_pres_filt) / num_pres * 100, 2)))
     print(f"{name}: {num_pres} - {num_pres_filt} = {num_pres - num_pres_filt}"
           f" ({(num_pres - num_pres_filt) / num_pres * 100:.2f}%)")
     

@@ -13,7 +13,7 @@ for name in names:
     durations = pres_type['duration']
     type_median = durations.median()
 
-    rows.append((name, type_median))
+    rows.append((name, round(type_median, 4)))
     print(f"{name}: {type_median:.4f} s")
 
 df = pd.DataFrame(rows, columns=['stimulus_name', 'median_duration'])
