@@ -91,6 +91,7 @@ drifting_gratings_contrast: 18360 - 18355 = 5 (0.03%)
 natural_movie_one_more_repeats: 1559 - 1551 = 8 (0.51%)  
 drifting_gratings_75_repeats: 15600 - 15591 = 9 (0.06%)  
 dot_motion: 11070 - 11031 = 39 (0.35%)  
+[docs/presentations_filtered_summary.csv](docs/presentations_filtered_summary.csv)  
 
 ### Actual median durations used for filtering
 gabors: 0.2502 s  
@@ -113,7 +114,6 @@ dot_motion: 1.0008 s
 - Label bins by center time
 - Align running speed to spiking bins by linear interpolation
 - Align all pupil data variables to spiking bins by linear interpolation  
-[docs/presentations_filtered_summary.csv](docs/presentations_filtered_summary.csv)  
 
 # Notebook
 [Notebook](presentation/Data_exploration_notebook.ipynb) contains code for accessing row Allen SDK data and exploring the processed data.  
