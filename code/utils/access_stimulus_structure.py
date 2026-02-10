@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 import numpy as np
@@ -27,8 +28,8 @@ def access_stimulus_structure(stimulus, structure, out_path, data='spike_data'):
     data : str, optional
         The type of data to access: 'spike_data' or 'speed'
     """
-    assert (data in ['spike_data', 'speed'],
-            "data must be one of 'spike_data' or 'speed'")
+    if data not in ["spike_data", "speed"]:
+        raise ValueError("data must be one of 'spike_data' or 'speed'")
 
     stim_path = IN_PATH / f"{stimulus}.h5"
     if not stim_path.exists():
@@ -37,8 +38,11 @@ def access_stimulus_structure(stimulus, structure, out_path, data='spike_data'):
     out_path = Path(out_path)
     out_path.mkdir(parents=True, exist_ok=True)
 
+    print("Opening data tree for stimulus:", stimulus)
     dt = xr.open_datatree(stim_path, engine="h5netcdf")
     n_sessions = 0
+
+    print("Tree opened")
 
     for session_name, session_node in dt.children.items():
         if structure not in session_node.children:
@@ -47,11 +51,12 @@ def access_stimulus_structure(stimulus, structure, out_path, data='spike_data'):
         if data not in struct_node.children:
             continue
         data_node = struct_node[data]
-        xr_obj = data_node.data
+        ds = data_node.ds
+        xr_obj = ds[data]
 
         if data == "spike_data":
             xr_obj = xr_obj.transpose("unit_id", "presentation_id", "time")
-        elif data == "speed":
+        else:
             xr_obj = xr_obj.transpose("presentation_id", "time")
 
         arr = xr_obj.to_numpy()
@@ -62,3 +67,22 @@ def access_stimulus_structure(stimulus, structure, out_path, data='spike_data'):
     dt.close()
 
     print(f"{n_sessions} sessions extracted for stimulus {stimulus} and structure {structure}")
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description="Extract per-session arrays for a stimulus and structure."
+    )
+    parser.add_argument("stimulus", help="Stimulus type, e.g. natural_movie_one")
+    parser.add_argument("structure", help="Brain structure, e.g. VISp")
+    parser.add_argument("out_path", help="Output directory for .npy files")
+    parser.add_argument(
+        "--data",
+        default="spike_data",
+        choices=["spike_data", "speed"],
+        help="Data type to extract",
+    )
+    args = parser.parse_args()
+
+    access_stimulus_structure(args.stimulus, args.structure, args.out_path, args.data)
