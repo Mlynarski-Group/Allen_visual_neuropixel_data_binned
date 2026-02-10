@@ -18,7 +18,7 @@ for name in names:
                  round((num_pres - num_pres_filt) / num_pres * 100, 2)))
     print(f"{name}: {num_pres} - {num_pres_filt} = {num_pres - num_pres_filt}"
           f" ({(num_pres - num_pres_filt) / num_pres * 100:.2f}%)")
-    
+
 df = pd.DataFrame(rows, columns=['stimulus_name', 'num_presentations_before',
                                  'num_presentations_after', 'num_presentations_removed',
                                  'percent_presentations_removed'])
