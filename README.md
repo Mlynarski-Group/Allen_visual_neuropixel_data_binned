@@ -132,6 +132,14 @@ Loading processed data requires [xarray-env](envs/xarray_env.yml) conda environm
 - [Sessions per stimulus type, stacked by session type](figures/sessions_per_stimulus.png)
 - [Example spike raster bins for one presentation](figures/example_spikes_over_bins.png)
 
+# Scripts
+## access_stimulus_structures.py
+    - Access .h5 files by stimulus type, brain structure, data type (spikes or speed)
+    - Save to given output path as .npy files, one per session
+    - Dimensions of saved arrays:
+        - Spikes: neurons x presentations x time
+        - Speed: presentations x time
+
 # cmd commands
 ## New allensdk installation
 ```bash
