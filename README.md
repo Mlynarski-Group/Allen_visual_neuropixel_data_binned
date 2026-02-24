@@ -39,8 +39,10 @@ relevant_stimulus_parameters = {
 - Along dimension neurons: spike_data
 - Along dimension trials: spike_data, speed, pupil_data, presentations
 
-# Main data files
+# Data
+## Main data files
 - [data/02_stimulus_types/](data/02_stimulus_types/): h5 files per stimulus type with processed data tensors
+- [data/03_subset_natural_visual](data/03_subset_natural_visual/): subset of h5 files for natural stimuli (natural_movie_one, natural_movie_three, natural_scenes) with only visual cortex areas
 - [data/presentations/03_presentations_filtered_by_duration.csv](data/presentations/03_presentations_filtered_by_duration.csv): All presentations remaining after filtering out presentations with irregular durations
 - [data/combined_statistics.csv](data/combined_statistics.csv): Summary statistics of the numbers of units and presentations per stimulus type, session, and brain structure
 
@@ -50,6 +52,15 @@ relevant_stimulus_parameters = {
 - [docs/All_presentation_parameters.csv](docs/All_presentation_parameters.csv): All unique stimulus parameters for all stimulus types and all presentations
 - [docs/presentations_median_durations.csv](docs/presentations_median_durations.csv): Actual median durations used for filtering presentations per stimulus type
 - [docs/presentations_filtered_summary.csv](docs/presentations_filtered_summary.csv): Summary of number of presentations before and after filtering per stimulus type
+
+## Data size
+- data/01_sessions_presentations/: 11.99 GB
+- data/02_stimulus_types/: 18.82 GB
+- data/03_subset_natural_visual/: 3.19 GB
+- data/presentations/: 827.55 MB
+- data/combined_statistics.csv: 250.69 KB
+- data/sessions.csv: 13.19 KB
+- data/units.csv: 21.65 MB
 
 # Actions taken on data
 ## Combined stimulus types
