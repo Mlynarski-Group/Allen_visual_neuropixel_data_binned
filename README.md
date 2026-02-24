@@ -144,27 +144,73 @@ Loading processed data requires [xarray-env](envs/xarray_env.yml) conda environm
 - [Example spike raster bins for one presentation](figures/example_spikes_over_bins.png)
 
 # Scripts
-## access_stimulus_structures.py
+## access_stimulus_structure.py
     - Access .h5 files by stimulus type, brain structure, data type (spikes or speed)
     - Save to given output path as .npy files, one per session
     - Dimensions of saved arrays:
         - Spikes: neurons x presentations x time
         - Speed: presentations x time
 
-# cmd commands
-## New allensdk installation
-```bash
-conda create -n allensdk python=3.9 pip
-pip install allensdk
-pip install ipykernel
+### Usage as Python module
+```python
+from code.utils.access_stimulus_structure import access_stimulus_structure
+
+access_stimulus_structure(
+    stimulus,           # stimulus type to access
+    structure,          # brain structure
+    out_path,           # output directory for per-session .npy files
+    data="spike_data",  # "spike_data" (default) or "speed"
+)
 ```
+Example:
+```python
+access_stimulus_structure(
+    stimulus="natural_movie_one",
+    structure="VISp",
+    out_path="data/npy_out",
+    data="spike_data",
+)
+```
+
+### Usage as command line script
+```bash
+python code/utils/access_stimulus_structure.py \
+    <stimulus> <structure> <out_path> [--data {spike_data,speed}]
+```
+Example:
+```bash
+python code/utils/access_stimulus_structure.py natural_movie_one VISp data/npy_out --data spike_data
+```
+
+# cmd commands
+## Data download
+```bash
+datalad clone https://github.com/Mlynarski-Group/Allen_visual_neuropixel_data_binned
+OR
+git clone https://github.com/Mlynarski-Group/Allen_visual_neuropixel_data_binned
+
+cd Allen_visual_neuropixel_data_binned
+
+datalad get /path/to/file/or/directory
+OR
+git annex get /path/to/file/or/directory
+```
+
 ## Environments
 Allensdk requires python 3.9, but xarray requires latest versions (xarray > v2025.10.0) to work with DataTrees.
 ```bash
 conda env create -f envs/allensdk_env.yml
 conda env create -f envs/xarray_env.yml
 ```
-## Running the code
+
+## New allensdk installation
+```bash
+conda create -n allensdk python=3.9 pip
+pip install allensdk
+pip install ipykernel
+```
+
+## Running heavy code for dataset creation
 ```bash
 nohup setsid ./code/datalad_wrapper.sh & echo $! > logs/run.pid  # Start remote job with wrapper
 ps -p $(cat logs/run.pid)  # Check if job is running

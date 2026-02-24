@@ -1,3 +1,32 @@
+"""Utilities to export per-session arrays from stimulus `.h5` files.
+
+Usage as a Python module
+------------------------
+Import and call `access_stimulus_structure`:
+
+    from code.utils.access_stimulus_structure import access_stimulus_structure
+    access_stimulus_structure("natural_movie_one", "VISp", "data/out")
+
+Arguments:
+- `stimulus` (str): stimulus type to access (e.g., 'natural_movie_one').
+- `structure` (str): brain structure key inside each session tree.
+- `out_path` (str | Path): output directory where `.npy` files are written.
+- `data` (str, optional): one of `"spike_data"` or `"speed"`. Default: `"spike_data"`.
+
+Usage from command line
+-----------------------
+Run the file in the dataset root directory with the following command:
+
+    python code/utils/access_stimulus_structure.py \
+        <stimulus> <structure> <out_path> [--data {spike_data,speed}]
+
+CLI arguments:
+- `stimulus`: same as module argument.
+- `structure`: same as module argument.
+- `out_path`: same as module argument.
+- `--data`: same as module argument; defaults to `spike_data`.
+"""
+
 import argparse
 from pathlib import Path
 
@@ -20,13 +49,14 @@ def access_stimulus_structure(stimulus, structure, out_path, data='spike_data'):
     Parameters
     ----------
     stimulus : str
-        The stimulus type to access (e.g., 'natural_movie_one').
+        Stimulus type to access (e.g., 'natural_movie_one').
     structure : str
-        The brain structure to access (e.g., 'VISp').
-    out_path : Path
-        The path to save the output .npy files.
+        Brain structure key to access in each session (e.g., 'VISp').
+    out_path : str or Path
+        Output directory where per-session `.npy` files are saved.
     data : str, optional
-        The type of data to access: 'spike_data' or 'speed'
+        Data key to extract from each structure: 'spike_data' or 'speed'.
+        Default is 'spike_data'.
     """
     if data not in ["spike_data", "speed"]:
         raise ValueError("data must be one of 'spike_data' or 'speed'")
