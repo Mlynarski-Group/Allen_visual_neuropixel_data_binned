@@ -4,3 +4,4 @@ __pycache__/
 pyproject.toml
 /logs
 nohup.out
+.codex
